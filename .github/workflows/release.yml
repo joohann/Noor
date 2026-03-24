@@ -54,7 +54,12 @@ jobs:
           open('WLED/platformio_override.ini', 'w').write('[platformio]\ndefault_envs = nodemcuv2\n')
           print('override aangemaakt')
           "
-          cat WLED/platformio_override.ini
+
+      - name: WLED web UI bouwen (genereert html_ui.h)
+        working-directory: WLED
+        run: |
+          npm install
+          npm run build
 
       - name: Firmware compileren
         working-directory: WLED

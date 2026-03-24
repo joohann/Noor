@@ -51,6 +51,19 @@ jobs:
           cp noor/wled00/data/index.htm WLED/wled00/data/index.htm
           echo "GUI gekopieerd"
 
+          python3 -c "
+          lines = [
+              '[platformio]',
+              'default_envs = lolin_s2_mini',
+              '',
+              '[env:lolin_s2_mini]',
+              'board_build.partitions = tools/WLED_ESP32_4MB_1MB_FS.csv',
+          ]
+          open('WLED/platformio_override.ini', 'w').write('\n'.join(lines) + '\n')
+          print('platformio_override.ini aangemaakt')
+          "
+          cat WLED/platformio_override.ini
+
       - name: WLED web UI bouwen (genereert html_ui.h)
         working-directory: WLED
         run: |

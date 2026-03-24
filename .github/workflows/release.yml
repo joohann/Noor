@@ -11,13 +11,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ── 1. Code ophalen ──────────────────────────────────
-      - name: Checkout
+      # ── 1. Noor repo ophalen ─────────────────────────────
+      - name: Checkout Noor
         uses: actions/checkout@v4
         with:
-          submodules: recursive
+          path: noor
 
-      # ── 2. Python + PlatformIO installeren ───────────────
+      # ── 2. WLED broncode ophalen ─────────────────────────
+      - name: Checkout WLED
+        uses: actions/checkout@v4
+        with:
+          repository: Aircoookie/WLED
+          ref: main
+          path: WLED
+
+      # ── 3. Noor GUI over WLED leggen ─────────────────────
+      - name: Noor over WLED leggen
+        run: |
+          cp noor/wled00/data/index.htm WLED/wled00/data/index.htm
+          cp noor/platformio.ini        WLED/platformio.ini
+          echo "Noor GUI gekopieerd naar WLED"
+
+      # ── 4. Python + PlatformIO installeren ───────────────
       - name: Python instellen
         uses: actions/setup-python@v5
         with:
@@ -26,42 +41,43 @@ jobs:
       - name: PlatformIO installeren
         run: pip install platformio
 
-      # ── 3. Node.js voor WLED web UI build ────────────────
+      # ── 5. Node.js voor WLED web UI build ────────────────
       - name: Node.js instellen
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # ── 4. Versienummer uit de tag halen ─────────────────
+      # ── 6. Versienummer uit de tag halen ─────────────────
       - name: Versie bepalen
         id: version
         run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
 
-      # ── 5. Versienummer in de GUI injecteren ─────────────
+      # ── 7. Versienummer in de GUI injecteren ─────────────
       - name: Versie in GUI zetten
         run: |
           sed -i "s/const CURRENT_VERSION = '[^']*'/const CURRENT_VERSION = '${{ steps.version.outputs.VERSION }}'/" \
-            wled00/data/index.htm
+            WLED/wled00/data/index.htm
           echo "GUI versie: ${{ steps.version.outputs.VERSION }}"
 
-      # ── 6. Firmware bouwen ───────────────────────────────
+      # ── 8. Firmware bouwen ───────────────────────────────
       - name: Firmware compileren
+        working-directory: WLED
         run: platformio run -e d1_mini
 
-      # ── 7. .bin hernoemen met versienummer ───────────────
+      # ── 9. .bin hernoemen met versienummer ───────────────
       - name: Binary klaarzetten
         run: |
           mkdir -p release
-          cp .pio/build/d1_mini/firmware.bin \
+          cp WLED/.pio/build/d1_mini/firmware.bin \
             release/noor-${{ steps.version.outputs.VERSION }}-d1_mini.bin
           echo "Binary: noor-${{ steps.version.outputs.VERSION }}-d1_mini.bin"
 
-      # ── 8. GitHub Release aanmaken met .bin als asset ────
+      # ── 10. GitHub Release aanmaken met .bin als asset ───
       - name: GitHub Release aanmaken
         uses: softprops/action-gh-release@v2
         with:
           name: "Noor v${{ steps.version.outputs.VERSION }}"
-          body_path: CHANGELOG.md
+          body_path: noor/CHANGELOG.md
           files: release/noor-${{ steps.version.outputs.VERSION }}-d1_mini.bin
           draft: false
           prerelease: false

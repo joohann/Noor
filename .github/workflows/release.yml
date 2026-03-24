@@ -31,17 +31,11 @@ jobs:
           cp noor/wled00/data/index.htm WLED/wled00/data/index.htm
           echo "Noor GUI gekopieerd"
 
-          # Gebruik WLED's eigen platformio.ini als basis.
-          # Schrijf alleen een override om d1_mini als default te zetten
-          # en de Noor naam toe te voegen.
-          cat > WLED/platformio_override.ini << 'EOF'
-[platformio]
-default_envs = d1_mini
+          printf '[platformio]\ndefault_envs = d1_mini\n\n[env:d1_mini]\nbuild_flags = ${env.build_flags} -D WLED_RELEASE_NAME=\x27"Noor"\x27\n' \
+            > WLED/platformio_override.ini
 
-[env:d1_mini]
-build_flags = ${env.build_flags} -D WLED_RELEASE_NAME='"Noor"'
-EOF
           echo "platformio_override.ini aangemaakt"
+          cat WLED/platformio_override.ini
 
       # ── 4. Python + PlatformIO installeren ───────────────
       - name: Python instellen

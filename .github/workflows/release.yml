@@ -49,7 +49,7 @@ jobs:
           sed -i "s/const CURRENT_VERSION = '[^']*'/const CURRENT_VERSION = '${{ steps.version.outputs.VERSION }}'/" \
             noor/wled00/data/index.htm
           cp noor/wled00/data/index.htm WLED/wled00/data/index.htm
-          echo "GUI gekopieerd — GEEN platformio_override.ini, WLED's eigen env flags blijven intact"
+          echo "GUI gekopieerd"
 
       - name: WLED web UI bouwen (genereert html_ui.h)
         working-directory: WLED
@@ -59,13 +59,13 @@ jobs:
 
       - name: Firmware compileren
         working-directory: WLED
-        run: pio run -e nodemcuv2
+        run: pio run -e lolin_s2_mini
 
       - name: Binary klaarzetten
         run: |
           mkdir -p release
-          cp WLED/.pio/build/nodemcuv2/firmware.bin \
-            release/noor-${{ steps.version.outputs.VERSION }}-esp8266.bin
+          cp WLED/.pio/build/lolin_s2_mini/firmware.bin \
+            release/noor-${{ steps.version.outputs.VERSION }}-esp32s2.bin
           ls -lh release/
 
       - name: GitHub Release aanmaken
@@ -73,7 +73,7 @@ jobs:
         with:
           name: "Noor v${{ steps.version.outputs.VERSION }}"
           body_path: noor/CHANGELOG.md
-          files: release/noor-${{ steps.version.outputs.VERSION }}-esp8266.bin
+          files: release/noor-${{ steps.version.outputs.VERSION }}-esp32s2.bin
           draft: false
           prerelease: false
         env:

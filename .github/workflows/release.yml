@@ -50,24 +50,21 @@ jobs:
             noor/wled00/data/index.htm
           cp noor/wled00/data/index.htm WLED/wled00/data/index.htm
           echo "GUI gekopieerd"
-
-          # Alleen default_envs overschrijven — GEEN [env:d1_mini] sectie
-          # anders verliest PlatformIO de 'platform' instelling van WLED
           python3 -c "
-          open('WLED/platformio_override.ini', 'w').write('[platformio]\ndefault_envs = d1_mini\n')
+          open('WLED/platformio_override.ini', 'w').write('[platformio]\ndefault_envs = nodemcuv2\n')
           print('override aangemaakt')
           "
           cat WLED/platformio_override.ini
 
       - name: Firmware compileren
         working-directory: WLED
-        run: pio run -e d1_mini
+        run: pio run -e nodemcuv2
 
       - name: Binary klaarzetten
         run: |
           mkdir -p release
-          cp WLED/.pio/build/d1_mini/firmware.bin \
-            release/noor-${{ steps.version.outputs.VERSION }}-d1_mini.bin
+          cp WLED/.pio/build/nodemcuv2/firmware.bin \
+            release/noor-${{ steps.version.outputs.VERSION }}-esp8266.bin
           ls -lh release/
 
       - name: GitHub Release aanmaken
@@ -75,7 +72,7 @@ jobs:
         with:
           name: "Noor v${{ steps.version.outputs.VERSION }}"
           body_path: noor/CHANGELOG.md
-          files: release/noor-${{ steps.version.outputs.VERSION }}-d1_mini.bin
+          files: release/noor-${{ steps.version.outputs.VERSION }}-esp8266.bin
           draft: false
           prerelease: false
         env:

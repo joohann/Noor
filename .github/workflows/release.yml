@@ -49,11 +49,7 @@ jobs:
           sed -i "s/const CURRENT_VERSION = '[^']*'/const CURRENT_VERSION = '${{ steps.version.outputs.VERSION }}'/" \
             noor/wled00/data/index.htm
           cp noor/wled00/data/index.htm WLED/wled00/data/index.htm
-          echo "GUI gekopieerd"
-          python3 -c "
-          open('WLED/platformio_override.ini', 'w').write('[platformio]\ndefault_envs = nodemcuv2\n')
-          print('override aangemaakt')
-          "
+          echo "GUI gekopieerd — GEEN platformio_override.ini, WLED's eigen env flags blijven intact"
 
       - name: WLED web UI bouwen (genereert html_ui.h)
         working-directory: WLED

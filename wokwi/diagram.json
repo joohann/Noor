@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "author": "joohann",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-s3-devkitc-1",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": { "flashSize": "8" }
+    },
+    {
+      "type": "wokwi-neopixel-strip",
+      "id": "leds",
+      "top": 200,
+      "left": -100,
+      "attrs": {
+        "rgbw": "1",
+        "length": "30"
+      }
+    }
+  ],
+  "connections": [
+    [ "leds:GND", "esp:GND.1", "black",  ["v0"] ],
+    [ "leds:VCC", "esp:3V3",   "red",    ["v0"] ],
+    [ "leds:DIN", "esp:16",    "green",  ["v0"] ]
+  ],
+  "dependencies": {}
+}

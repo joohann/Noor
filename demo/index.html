@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noor · نور</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@300;400&family=Noto+Naskh+Arabic:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════ */
+:root {
+  --ink:    #04090f;
+  --deep:   #070f1a;
+  --panel:  rgba(255,255,255,0.042);
+  --rim:    rgba(255,255,255,0.08);
+  --rim2:   rgba(255,255,255,0.16);
+  --water:  #0891b2;
+  --water2: #22d3ee;
+  --glow:   rgba(8,145,178,0.22);
+  --foam:   #e0f2fe;
+  --kelp:   #34d399;
+  --sun:    #fbbf24;
+  --coral:  #f87171;
+  --muted:  rgba(186,230,255,0.36);
+  --text:   rgba(214,244,255,0.88);
+  --gold:   #d4a853;
+  --gold2:  rgba(212,168,83,0.18);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;}
+body{
+  background:var(--ink);color:var(--text);
+  font-family:'Lora',Georgia,serif;
+  min-height:100vh;overflow-x:hidden;
+}
+
+/* ══════════════════════════════════════════
+   ANIMATED BACKGROUND
+══════════════════════════════════════════ */
+.bg{
+  position:fixed;inset:0;z-index:0;overflow:hidden;
+  background:radial-gradient(ellipse 100% 60% at 50% 120%,#031525 0%,var(--ink) 65%);
+}
+.caustic{
+  position:absolute;inset:-50%;
+  background:
+    radial-gradient(ellipse 32% 20% at 22% 48%,rgba(8,145,178,.08) 0%,transparent 65%),
+    radial-gradient(ellipse 24% 16% at 74% 55%,rgba(52,211,153,.05) 0%,transparent 65%),
+    radial-gradient(ellipse 38% 24% at 54% 25%,rgba(8,145,178,.06) 0%,transparent 65%);
+  animation:cdrift 16s ease-in-out infinite alternate;
+}
+@keyframes cdrift{
+  0%{transform:translate(0,0) scale(1)rotate(0deg);}
+  50%{transform:translate(-2%,4%) scale(1.06)rotate(.3deg);}
+  100%{transform:translate(3%,-2%) scale(.96)rotate(-.2deg);}
+}
+.bubble{
+  position:absolute;border-radius:50%;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.05);
+  animation:rise linear infinite;
+}
+@keyframes rise{
+  0%{transform:translateY(0);opacity:0;}
+  8%{opacity:.7;}85%{opacity:.25;}
+  100%{transform:translateY(-110vh);opacity:0;}
+}
+
+/* ══════════════════════════════════════════
+   WIZARD OVERLAY
+══════════════════════════════════════════ */
+#wizard{
+  position:fixed;inset:0;z-index:50;
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;
+  background:rgba(4,9,15,.88);
+  backdrop-filter:blur(12px);
+  transition:opacity .45s ease;
+}
+#wizard.out{opacity:0;pointer-events:none;}
+
+.wz-card{
+  width:100%;max-width:400px;
+  background:linear-gradient(145deg,rgba(7,15,26,.98),rgba(4,9,15,.98));
+  border:1px solid var(--rim2);
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:0 0 60px rgba(8,145,178,.12), 0 40px 80px rgba(0,0,0,.5);
+  animation:wzIn .5s cubic-bezier(.34,1.4,.64,1) both;
+}
+@keyframes wzIn{
+  from{opacity:0;transform:translateY(28px) scale(.96);}
+  to{opacity:1;transform:none;}
+}
+
+/* progress bar at top */
+.wz-progress{
+  height:3px;
+  background:rgba(255,255,255,.06);
+  position:relative;overflow:hidden;
+}
+.wz-progress-fill{
+  position:absolute;left:0;top:0;bottom:0;
+  background:linear-gradient(90deg,var(--water),var(--water2));
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 12px rgba(34,211,238,.4);
+}
+
+.wz-body{padding:32px 28px 24px;}
+
+/* step header */
+.wz-step-label{
+  font-family:'DM Mono',monospace;font-size:9px;
+  letter-spacing:3px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:20px;
+  display:flex;align-items:center;gap:8px;
+}
+.wz-step-label::after{
+  content:'';flex:1;height:1px;background:var(--rim);
+}
+
+/* ── WELCOME STEP ── */
+.wz-brand{text-align:center;padding:8px 0 28px;}
+.wz-arabic{
+  font-family:'Noto Naskh Arabic',serif;
+  font-size:52px;font-weight:600;
+  background:linear-gradient(135deg,var(--water2),var(--foam));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  line-height:1;margin-bottom:6px;
+  filter:drop-shadow(0 0 20px rgba(34,211,238,.3));
+}
+.wz-name{
+  font-family:'Lora',serif;font-size:26px;font-weight:400;
+  letter-spacing:4px;color:var(--foam);
+  text-transform:uppercase;margin-bottom:12px;
+}
+.wz-tagline{
+  font-size:15px;font-weight:400;font-style:italic;
+  color:var(--muted);line-height:1.5;margin-bottom:20px;
+}
+.powered-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--rim);
+  border-radius:999px;padding:6px 14px;
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--muted);letter-spacing:1px;
+}
+.wled-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:#a78bfa;box-shadow:0 0 8px #a78bfa;
+}
+
+/* ── WIFI STEP ── */
+.wifi-list{
+  display:flex;flex-direction:column;gap:6px;
+  margin-bottom:16px;max-height:220px;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:var(--rim) transparent;
+}
+.wifi-item{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(0,0,0,.25);border:1px solid var(--rim);
+  border-radius:10px;padding:11px 14px;cursor:pointer;
+  transition:all .18s;
+}
+.wifi-item:hover{border-color:var(--rim2);background:rgba(8,145,178,.06);}
+.wifi-item.selected{border-color:var(--water);background:rgba(8,145,178,.1);}
+.wifi-signal{display:flex;align-items:flex-end;gap:2px;height:14px;}
+.wifi-signal span{
+  width:3px;border-radius:1px;
+  background:var(--muted);transition:background .2s;
+}
+.wifi-item.selected .wifi-signal span{background:var(--water2);}
+.wifi-name{flex:1;font-size:14px;font-weight:400;}
+.wifi-lock{font-size:11px;color:var(--muted);}
+.wifi-scan{
+  display:flex;align-items:center;gap:8px;
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--muted);letter-spacing:1px;cursor:pointer;
+  margin-bottom:12px;
+}
+.wifi-scan:hover{color:var(--water2);}
+.spin{display:inline-block;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── PASSWORD ── */
+.pw-target{
+  font-size:13px;color:var(--muted);margin-bottom:12px;
+  font-family:'DM Mono',monospace;letter-spacing:.5px;
+}
+.pw-target strong{color:var(--water2);}
+
+/* ── INPUTS SHARED ── */
+.wz-input{
+  width:100%;background:rgba(0,0,0,.35);
+  border:1px solid var(--rim);border-radius:10px;
+  padding:12px 14px;color:var(--text);
+  font-family:'DM Mono',monospace;font-size:14px;
+  outline:none;transition:border-color .2s,box-shadow .2s;
+  margin-bottom:10px;
+}
+.wz-input:focus{
+  border-color:var(--water);
+  box-shadow:0 0 0 3px rgba(8,145,178,.12);
+}
+.wz-input::placeholder{color:var(--muted);}
+.pw-toggle{
+  position:relative;
+}
+.pw-toggle .wz-input{padding-right:44px;}
+.pw-eye{
+  position:absolute;right:13px;top:50%;transform:translateY(-55%);
+  font-size:15px;cursor:pointer;opacity:.45;
+  transition:opacity .15s;user-select:none;
+}
+.pw-eye:hover{opacity:.8;}
+
+/* ── NAME STEP ── */
+.name-preview{
+  text-align:center;margin:16px 0 20px;
+  font-size:22px;color:var(--foam);letter-spacing:2px;
+  min-height:30px;transition:all .2s;
+}
+
+/* ── LED STEP ── */
+.led-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.led-num{
+  flex:1;background:rgba(0,0,0,.35);
+  border:1px solid var(--rim);border-radius:10px;
+  padding:12px 14px;color:var(--text);
+  font-family:'DM Mono',monospace;font-size:18px;
+  outline:none;text-align:center;
+  transition:border-color .2s;
+}
+.led-num:focus{border-color:var(--water);}
+.led-stepper{
+  display:flex;flex-direction:column;gap:5px;
+}
+.step-btn{
+  width:36px;height:28px;
+  background:rgba(255,255,255,.05);border:1px solid var(--rim);
+  border-radius:7px;color:var(--text);font-size:16px;
+  cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;
+}
+.step-btn:hover{background:var(--glow);border-color:var(--water);}
+.led-hint{
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--muted);line-height:1.7;margin-bottom:14px;
+}
+.led-hint span{color:var(--water2);}
+
+/* test strip button */
+.test-btn{
+  width:100%;background:rgba(8,145,178,.1);
+  border:1px dashed rgba(8,145,178,.3);
+  border-radius:10px;padding:11px;
+  color:var(--water2);font-family:'Lora',serif;
+  font-size:14px;font-weight:600;letter-spacing:.5px;
+  cursor:pointer;transition:all .2s;margin-bottom:6px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.test-btn:hover{background:rgba(8,145,178,.2);border-style:solid;}
+.test-btn.testing{
+  background:rgba(34,211,238,.12);border-color:var(--water2);
+  animation:testPulse .6s ease-in-out infinite alternate;
+}
+@keyframes testPulse{
+  from{box-shadow:0 0 0 0 rgba(34,211,238,.2);}
+  to{box-shadow:0 0 20px 4px rgba(34,211,238,.2);}
+}
+
+/* ── DONE STEP ── */
+.done-center{text-align:center;padding:12px 0 20px;}
+.done-icon{
+  font-size:48px;margin-bottom:16px;
+  animation:popIn .5s cubic-bezier(.34,1.6,.64,1) both;
+}
+@keyframes popIn{from{transform:scale(0);}to{transform:scale(1);}}
+.done-title{font-size:24px;font-weight:600;color:var(--foam);margin-bottom:8px;}
+.done-sub{font-size:14px;font-style:italic;color:var(--muted);line-height:1.6;}
+.done-summary{
+  background:rgba(0,0,0,.25);border:1px solid var(--rim);
+  border-radius:10px;padding:14px 16px;margin:16px 0;
+  font-family:'DM Mono',monospace;font-size:11px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.ds-row{display:flex;justify-content:space-between;align-items:center;}
+.ds-key{color:var(--muted);letter-spacing:1px;}
+.ds-val{color:var(--foam);}
+
+/* ── FOOTER BUTTONS ── */
+.wz-footer{
+  padding:0 28px 24px;
+  display:flex;gap:9px;
+}
+.wz-btn{
+  flex:1;border-radius:11px;padding:13px;
+  font-family:'Lora',serif;font-size:15px;font-weight:600;
+  cursor:pointer;transition:all .2s;letter-spacing:.3px;
+}
+.wz-btn-primary{
+  background:linear-gradient(135deg,rgba(8,145,178,.35),rgba(34,211,238,.2));
+  border:1px solid var(--water);color:var(--foam);
+}
+.wz-btn-primary:hover{background:linear-gradient(135deg,rgba(8,145,178,.5),rgba(34,211,238,.3));}
+.wz-btn-primary:active{transform:scale(.98);}
+.wz-btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.wz-btn-ghost{
+  background:transparent;border:1px solid var(--rim);
+  color:var(--muted);flex:0 0 auto;padding:13px 16px;
+}
+.wz-btn-ghost:hover{border-color:var(--rim2);color:var(--text);}
+
+.wz-error{
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--coral);text-align:center;
+  min-height:14px;padding:0 28px 8px;letter-spacing:.5px;
+}
+
+/* ══════════════════════════════════════════
+   MAIN APP
+══════════════════════════════════════════ */
+#app{
+  position:relative;z-index:1;
+  max-width:460px;margin:0 auto;
+  padding:22px 16px 60px;
+  display:flex;flex-direction:column;gap:13px;
+  opacity:0;transition:opacity .6s .2s;
+}
+#app.visible{opacity:1;}
+
+/* ── APP HEADER ── */
+.app-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:15px;border-bottom:1px solid var(--rim);
+  animation:fadeUp .5s both;
+}
+.app-brand{display:flex;align-items:baseline;gap:10px;}
+.app-arabic{
+  font-family:'Noto Naskh Arabic',serif;font-size:28px;font-weight:600;
+  background:linear-gradient(135deg,var(--water),var(--water2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;line-height:1;
+}
+.app-name{
+  font-family:'Lora',serif;font-size:18px;
+  letter-spacing:3px;text-transform:uppercase;
+  color:var(--foam);font-weight:400;
+}
+.app-powered{
+  display:flex;align-items:center;gap:5px;
+  font-family:'DM Mono',monospace;font-size:9px;
+  color:var(--muted);letter-spacing:1px;
+  margin-top:3px;
+}
+.wled-badge{
+  background:rgba(167,139,250,.12);
+  border:1px solid rgba(167,139,250,.25);
+  border-radius:4px;padding:2px 6px;
+  font-size:9px;color:#c4b5fd;letter-spacing:.5px;
+}
+.hright{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.status-pill{
+  display:flex;align-items:center;gap:6px;
+  background:var(--panel);border:1px solid var(--rim);
+  border-radius:999px;padding:5px 12px;
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--muted);cursor:pointer;letter-spacing:1px;
+  transition:border-color .2s;
+}
+.status-pill:hover{border-color:var(--water);}
+.sdot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--kelp);box-shadow:0 0 6px var(--kelp);
+}
+.vtag{
+  font-family:'DM Mono',monospace;font-size:9px;
+  color:rgba(200,230,255,.2);letter-spacing:1px;
+}
+
+/* ── UPDATE BANNER ── */
+.update-banner{
+  border-radius:13px;border:1px solid rgba(251,191,36,.28);
+  background:rgba(251,191,36,.05);
+  overflow:hidden;
+  animation:fadeUp .5s .08s both, pglow 3.5s 2s ease-in-out infinite;
+}
+@keyframes pglow{
+  0%,100%{box-shadow:none;}
+  50%{box-shadow:0 0 20px 2px rgba(251,191,36,.1);}
+}
+.ub-top{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 15px 10px;
+}
+.ub-icon{font-size:18px;flex-shrink:0;}
+.ub-title{font-size:15px;font-weight:600;color:var(--sun);}
+.ub-v{
+  font-family:'DM Mono',monospace;font-size:9px;
+  color:rgba(251,191,36,.5);letter-spacing:1px;margin-top:2px;
+}
+.ub-toggle{
+  margin-left:auto;font-size:17px;color:rgba(251,191,36,.4);
+  cursor:pointer;transition:transform .25s;user-select:none;line-height:1;
+}
+.ub-toggle.open{transform:rotate(180deg);}
+.ub-body{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1);}
+.ub-body.open{max-height:260px;}
+.ub-changelog{
+  padding:12px 15px 14px;
+  border-top:1px solid rgba(251,191,36,.1);
+}
+.ub-cl-title{
+  font-family:'DM Mono',monospace;font-size:9px;
+  letter-spacing:2px;text-transform:uppercase;
+  color:rgba(251,191,36,.4);margin-bottom:9px;
+}
+.ub-changes{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.ub-changes li{
+  display:flex;gap:8px;align-items:flex-start;
+  font-size:13px;line-height:1.45;color:rgba(214,244,255,.7);
+}
+.ub-changes li::before{
+  content:'';flex-shrink:0;width:5px;height:5px;
+  border-radius:50%;background:var(--sun);opacity:.45;margin-top:6px;
+}
+.ub-install-progress{
+  padding:0 15px 14px;display:none;
+}
+.ub-install-progress.show{display:block;}
+.ip-lbl{
+  font-family:'DM Mono',monospace;font-size:9px;
+  letter-spacing:2px;color:rgba(251,191,36,.55);margin-bottom:7px;
+}
+.ip-track{
+  height:3px;background:rgba(255,255,255,.07);
+  border-radius:999px;overflow:hidden;
+}
+.ip-fill{
+  height:100%;width:0;
+  background:linear-gradient(90deg,rgba(251,191,36,.6),var(--sun));
+  border-radius:999px;transition:width .4s ease;
+}
+.ip-msg{
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--muted);margin-top:7px;letter-spacing:.5px;
+}
+.ub-actions{display:flex;gap:8px;padding:0 15px 14px;}
+.ub-btn-install{
+  flex:1;background:rgba(251,191,36,.16);
+  border:1px solid rgba(251,191,36,.4);border-radius:9px;
+  padding:10px;color:var(--sun);
+  font-family:'Lora',serif;font-size:14px;font-weight:600;
+  cursor:pointer;transition:all .2s;
+}
+.ub-btn-install:hover{background:rgba(251,191,36,.26);}
+.ub-btn-later{
+  background:transparent;border:1px solid var(--rim);
+  border-radius:9px;padding:10px 13px;
+  color:var(--muted);font-family:'DM Mono',monospace;
+  font-size:10px;cursor:pointer;transition:all .2s;
+}
+.ub-btn-later:hover{border-color:var(--rim2);}
+
+/* ── TANK ── */
+.tank-wrap{
+  background:var(--panel);border:1px solid var(--rim);
+  border-radius:16px;overflow:hidden;padding:3px;
+  animation:fadeUp .4s .05s both;
+}
+.tank{
+  width:100%;height:68px;border-radius:13px;
+  overflow:hidden;display:flex;gap:2px;
+  background:#000;position:relative;
+}
+.tseg{flex:1;transition:background .4s ease;}
+.toverlay{
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.2) 0%,transparent 45%,rgba(0,0,0,.1) 100%);
+}
+.fish{position:absolute;opacity:.25;animation:swim linear infinite;}
+@keyframes swim{
+  0%  {transform:translateX(-28px) scaleX(1);}
+  49% {transform:translateX(calc(100% + 28px)) scaleX(1);}
+  50% {transform:translateX(calc(100% + 28px)) scaleX(-1);}
+  99% {transform:translateX(-28px) scaleX(-1);}
+  100%{transform:translateX(-28px) scaleX(1);}
+}
+
+/* ── CARD ── */
+.card{
+  background:var(--panel);border:1px solid var(--rim);
+  border-radius:15px;padding:17px 19px;
+  animation:fadeUp .5s both;
+}
+.card:nth-child(4){animation-delay:.06s;}
+.card:nth-child(5){animation-delay:.10s;}
+.card:nth-child(6){animation-delay:.14s;}
+.card:nth-child(7){animation-delay:.18s;}
+.clabel{
+  font-family:'DM Mono',monospace;font-size:9px;
+  letter-spacing:3px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:14px;
+}
+
+/* power row */
+.prow{display:flex;align-items:center;gap:15px;}
+.pwrbtn{
+  width:48px;height:48px;border-radius:50%;flex-shrink:0;
+  border:1.5px solid var(--rim);background:rgba(0,0,0,.3);
+  color:var(--muted);font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .25s;
+}
+.pwrbtn.on{
+  border-color:var(--kelp);color:var(--foam);
+  box-shadow:0 0 16px rgba(52,211,153,.35),inset 0 0 10px rgba(52,211,153,.1);
+}
+.bwrap{flex:1;}
+.bhead{display:flex;justify-content:space-between;margin-bottom:9px;font-size:14px;}
+.bval{font-family:'DM Mono',monospace;font-size:11px;color:var(--water);}
+.track{position:relative;height:4px;background:rgba(255,255,255,.07);border-radius:999px;}
+.tfill{
+  position:absolute;left:0;top:0;bottom:0;border-radius:999px;
+  transition:width .05s;
+  background:linear-gradient(90deg,rgba(8,145,178,.5),var(--water2));
+}
+input[type=range]{
+  position:absolute;inset:-10px 0;
+  width:100%;opacity:0;cursor:pointer;height:24px;
+}
+
+/* rgbw */
+.chgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.chlabel{display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px;}
+.chval{font-family:'DM Mono',monospace;font-size:10px;}
+
+/* presets */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.preset{
+  border-radius:10px;border:1px solid var(--rim);
+  overflow:hidden;cursor:pointer;
+  transition:all .18s;background:rgba(0,0,0,.3);position:relative;
+}
+.preset:hover{transform:translateY(-2px);border-color:var(--rim2);}
+.preset.active{border-color:var(--water);box-shadow:0 0 12px rgba(8,145,178,.2);}
+.pthumb{width:100%;height:38px;display:block;}
+.pbadge{position:absolute;top:7px;right:7px;font-size:13px;opacity:.6;}
+.pinfo{padding:8px 10px 9px;}
+.pname{font-size:13px;font-weight:600;color:var(--foam);}
+.pdesc{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;line-height:1.4;}
+
+/* effects */
+.erow{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+.erow::-webkit-scrollbar{display:none;}
+.echip{
+  flex-shrink:0;display:flex;flex-direction:column;
+  align-items:center;gap:4px;padding:8px 12px;
+  background:rgba(0,0,0,.28);border:1px solid var(--rim);
+  border-radius:9px;cursor:pointer;transition:all .18s;min-width:56px;
+}
+.echip:hover{border-color:var(--rim2);}
+.echip.active{border-color:var(--water);background:rgba(8,145,178,.1);}
+.eico{font-size:16px;}
+.ename{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);white-space:nowrap;}
+.echip.active .ename{color:var(--water2);}
+
+/* params */
+.paramrow{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+/* toast */
+.toast{
+  position:fixed;bottom:18px;left:50%;
+  transform:translateX(-50%) translateY(55px);
+  background:rgba(4,9,15,.97);border:1px solid var(--rim2);
+  border-radius:10px;padding:9px 18px;
+  font-family:'DM Mono',monospace;font-size:11px;
+  letter-spacing:1px;color:var(--foam);
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+  z-index:999;pointer-events:none;white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(14px);}
+  to{opacity:1;transform:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ BACKGROUND ═══ -->
+<div class="bg"><div class="caustic"></div></div>
+
+<!-- ═══════════════════════════════════════════
+     SETUP WIZARD
+════════════════════════════════════════════ -->
+<div id="wizard">
+  <div class="wz-card">
+    <div class="wz-progress">
+      <div class="wz-progress-fill" id="wzFill" style="width:0%"></div>
+    </div>
+    <div class="wz-body" id="wzBody"></div>
+    <div class="wz-error" id="wzError"></div>
+    <div class="wz-footer" id="wzFooter"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MAIN APP
+════════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div>
+      <div class="app-brand">
+        <div class="app-arabic">نور</div>
+        <div class="app-name">Noor</div>
+      </div>
+      <div class="app-powered">
+        Powered by <div class="wled-badge">WLED</div>
+      </div>
+    </div>
+    <div class="hright">
+      <div class="status-pill">
+        <div class="sdot"></div>
+        <span id="deviceName">Aquarium</span>
+      </div>
+      <div class="vtag" id="appVtag">v1.0.3</div>
+    </div>
+  </header>
+
+  <!-- UPDATE BANNER -->
+  <div class="update-banner" id="updateBanner">
+    <div class="ub-top">
+      <div class="ub-icon">⬆️</div>
+      <div>
+        <div class="ub-title">Update beschikbaar</div>
+        <div class="ub-v" id="ubVersions">v1.0.3 → v1.1.0</div>
+      </div>
+      <div class="ub-toggle" id="ubToggle" onclick="toggleCl()">›</div>
+    </div>
+    <div class="ub-body" id="ubBody">
+      <div class="ub-changelog">
+        <div class="ub-cl-title">Nieuw in v1.1.0</div>
+        <ul class="ub-changes">
+          <li>Nieuw preset: Koraalrif met dynamische kleurwisseling</li>
+          <li>Witte channel reageert nu apart op helderheidsslider</li>
+          <li>Snellere verbinding bij opstarten</li>
+          <li>Bugfix: Onweer effect stopte soms vroegtijdig</li>
+        </ul>
+      </div>
+    </div>
+    <div class="ub-install-progress" id="ubProg">
+      <div class="ip-lbl">INSTALLEREN</div>
+      <div class="ip-track"><div class="ip-fill" id="ipFill"></div></div>
+      <div class="ip-msg" id="ipMsg">Firmware ophalen van GitHub...</div>
+    </div>
+    <div class="ub-actions" id="ubActions">
+      <button class="ub-btn-install" onclick="doInstall()">Installeren</button>
+      <button class="ub-btn-later" onclick="dismissUpdate()">Later</button>
+    </div>
+  </div>
+
+  <!-- TANK -->
+  <div class="tank-wrap">
+    <div class="tank" id="tank"></div>
+    <div class="toverlay"></div>
+    <div class="fish" style="font-size:14px;animation-duration:19s;animation-delay:-4s;top:27%">🐠</div>
+    <div class="fish" style="font-size:11px;animation-duration:27s;animation-delay:-12s;top:53%">🐟</div>
+    <div class="fish" style="font-size:10px;animation-duration:23s;animation-delay:-18s;top:16%">🐡</div>
+  </div>
+
+  <!-- POWER & BRIGHTNESS -->
+  <div class="card">
+    <div class="clabel">Vermogen &amp; Helderheid</div>
+    <div class="prow">
+      <button class="pwrbtn on" id="pwrBtn" onclick="togglePower()">⏻</button>
+      <div class="bwrap">
+        <div class="bhead"><span>Helderheid</span><span class="bval" id="briVal">200</span></div>
+        <div class="track">
+          <div class="tfill" id="briFill" style="width:78%"></div>
+          <input type="range" min="0" max="255" value="200" oninput="setBri(this.value)">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RGBW -->
+  <div class="card">
+    <div class="clabel">RGBW Kanalen</div>
+    <div class="chgrid">
+      <div>
+        <div class="chlabel" style="color:#f87171"><span>Rood</span><span class="chval" id="chR">120</span></div>
+        <div class="track"><div class="tfill" id="fR" style="width:47%;background:linear-gradient(90deg,rgba(248,113,113,.3),#f87171)"></div><input type="range" min="0" max="255" value="120" oninput="setCh('R',this.value)"></div>
+      </div>
+      <div>
+        <div class="chlabel" style="color:#4ade80"><span>Groen</span><span class="chval" id="chG">180</span></div>
+        <div class="track"><div class="tfill" id="fG" style="width:71%;background:linear-gradient(90deg,rgba(74,222,128,.3),#4ade80)"></div><input type="range" min="0" max="255" value="180" oninput="setCh('G',this.value)"></div>
+      </div>
+      <div>
+        <div class="chlabel" style="color:#60a5fa"><span>Blauw</span><span class="chval" id="chB">255</span></div>
+        <div class="track"><div class="tfill" id="fB" style="width:100%;background:linear-gradient(90deg,rgba(96,165,250,.3),#60a5fa)"></div><input type="range" min="0" max="255" value="255" oninput="setCh('B',this.value)"></div>
+      </div>
+      <div>
+        <div class="chlabel" style="color:#e0f2fe"><span>Wit</span><span class="chval" id="chW">80</span></div>
+        <div class="track"><div class="tfill" id="fW" style="width:31%;background:linear-gradient(90deg,rgba(224,242,254,.15),rgba(224,242,254,.75))"></div><input type="range" min="0" max="255" value="80" oninput="setCh('W',this.value)"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRESETS -->
+  <div class="card">
+    <div class="clabel">Aquarium Presets</div>
+    <div class="pgrid" id="pgrid"></div>
+  </div>
+
+  <!-- EFFECTS -->
+  <div class="card">
+    <div class="clabel">Effecten</div>
+    <div class="erow" id="erow"></div>
+  </div>
+
+  <!-- PARAMS -->
+  <div class="card">
+    <div class="clabel">Parameters</div>
+    <div class="paramrow">
+      <div>
+        <div class="chlabel"><span>Snelheid</span><span class="chval" id="spdV">100</span></div>
+        <div class="track"><div class="tfill" id="fSpd" style="width:39%"></div><input type="range" min="0" max="255" value="100" oninput="setParam('spd',this.value)"></div>
+      </div>
+      <div>
+        <div class="chlabel"><span>Intensiteit</span><span class="chval" id="intV">128</span></div>
+        <div class="track"><div class="tfill" id="fInt" style="width:50%"></div><input type="range" min="0" max="255" value="128" oninput="setParam('int',this.value)"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════
+   WIZARD
+══════════════════════════════════════════ */
+const WZ = {
+  step: 0,
+  selectedWifi: null,
+  password: '',
+  deviceName: 'Aquarium Woonkamer',
+  ledCount: 90,
+  testing: false,
+};
+
+// Fake wifi networks for demo
+const FAKE_NETWORKS = [
+  {ssid:'Thuis_WiFi_5G',   strength:3, locked:true},
+  {ssid:'KPN_Wifi_4B2A',   strength:2, locked:true},
+  {ssid:'Ziggo_Guest',     strength:2, locked:false},
+  {ssid:'iPhone van Lisa', strength:1, locked:true},
+  {ssid:'NETGEAR_EXT',     strength:2, locked:true},
+];
+
+const STEPS = [
+  {id:'welcome',  progress:0,   title:null},
+  {id:'wifi',     progress:25,  title:'Stap 1 van 4 · Wifi'},
+  {id:'password', progress:50,  title:'Stap 2 van 4 · Wachtwoord'},
+  {id:'name',     progress:62,  title:'Stap 3 van 4 · Apparaatnaam'},
+  {id:'leds',     progress:75,  title:'Stap 4 van 4 · LED Strip'},
+  {id:'done',     progress:100, title:null},
+];
+
+function renderStep(){
+  const s = STEPS[WZ.step];
+  document.getElementById('wzFill').style.width = s.progress + '%';
+  document.getElementById('wzError').textContent = '';
+
+  const body = document.getElementById('wzBody');
+  const footer = document.getElementById('wzFooter');
+
+  body.innerHTML = '';
+  footer.innerHTML = '';
+
+  if(s.id === 'welcome'){
+    body.innerHTML = `
+      <div class="wz-brand">
+        <div class="wz-arabic">نور</div>
+        <div class="wz-name">Noor</div>
+        <div class="wz-tagline">Aquarium verlichting,<br>precies zoals je het wil.</div>
+        <div class="powered-badge">
+          <div class="wled-dot"></div>
+          Powered by WLED
+        </div>
+      </div>
+      <p style="font-size:14px;color:var(--muted);line-height:1.7;text-align:center;font-style:italic;">
+        Welkom! We stellen je Noor in een paar stappen in.<br>Dit duurt minder dan 2 minuten.
+      </p>`;
+    footer.innerHTML = `
+      <button class="wz-btn wz-btn-primary" onclick="nextStep()">Beginnen →</button>`;
+  }
+
+  else if(s.id === 'wifi'){
+    const items = MOCK_NETWORKS.map((n,i)=>{
+      const strength = n.rssi > -50 ? 3 : n.rssi > -65 ? 2 : 1;
+      const bars = [1,2,3].map(b=>`<span style="height:${b*4}px;${b<=strength?'background:currentColor':''}"></span>`).join('');
+      return `<div class="wifi-item${WZ.selectedWifi===n.ssid?' selected':''}" onclick="selectWifi('${n.ssid}')">
+        <div class="wifi-signal">${bars}</div>
+        <div class="wifi-name">${n.ssid}</div>
+        <div class="wifi-lock">🔒</div>
+      </div>`;
+    }).join('');
+
+    body.innerHTML = `
+      <div class="wz-step-label">${s.title}</div>
+      <div class="wifi-scan" onclick="rescan()">
+        <span id="scanIcon">⟳</span> Opnieuw scannen
+      </div>
+      <div class="wifi-list">${items}</div>`;
+    footer.innerHTML = `
+      <button class="wz-btn wz-btn-ghost" onclick="prevStep()">←</button>
+      <button class="wz-btn wz-btn-primary" id="wifiNext" onclick="nextStep()" ${WZ.selectedWifi?'':'disabled'}>
+        Volgende →
+      </button>`;
+  }
+
+  else if(s.id === 'password'){
+    body.innerHTML = `
+      <div class="wz-step-label">${s.title}</div>
+      <div class="pw-target">Wachtwoord voor <strong>${WZ.selectedWifi}</strong></div>
+      <div class="pw-toggle">
+        <input class="wz-input" type="password" id="pwInput" placeholder="Wachtwoord"
+          value="${WZ.password}" oninput="WZ.password=this.value" autocomplete="off">
+        <span class="pw-eye" onclick="togglePw()">👁</span>
+      </div>`;
+    footer.innerHTML = `
+      <button class="wz-btn wz-btn-ghost" onclick="prevStep()">←</button>
+      <button class="wz-btn wz-btn-primary" onclick="nextStep()">Verbinden →</button>`;
+  }
+
+  else if(s.id === 'name'){
+    body.innerHTML = `
+      <div class="wz-step-label">${s.title}</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">
+        Geef je apparaat een naam zodat je het makkelijk terug kan vinden in je netwerk.
+      </p>
+      <input class="wz-input" type="text" id="nameInput"
+        placeholder="bijv. Aquarium Woonkamer"
+        value="${WZ.deviceName}"
+        oninput="WZ.deviceName=this.value;document.getElementById('namePreview').textContent=this.value||'...'">
+      <div class="name-preview" id="namePreview">${WZ.deviceName}</div>`;
+    footer.innerHTML = `
+      <button class="wz-btn wz-btn-ghost" onclick="prevStep()">←</button>
+      <button class="wz-btn wz-btn-primary" onclick="nextStep()">Volgende →</button>`;
+  }
+
+  else if(s.id === 'leds'){
+    body.innerHTML = `
+      <div class="wz-step-label">${s.title}</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">
+        Hoeveel LEDs heeft je strip? Tel de LEDs op je strip of bereken: lengte (cm) × 0.6 voor 60 LEDs/meter.
+      </p>
+      <div class="led-row">
+        <input class="led-num" type="number" id="ledInput"
+          value="${WZ.ledCount}" min="1" max="1000"
+          oninput="WZ.ledCount=+this.value">
+        <div class="led-stepper">
+          <button class="step-btn" onclick="adjustLed(10)">+</button>
+          <button class="step-btn" onclick="adjustLed(-10)">−</button>
+        </div>
+      </div>
+      <div class="led-hint">
+        Aquarium <span>150cm</span> met 60 LED/m = <span>~90 LEDs</span><br>
+        Aquarium <span>100cm</span> met 60 LED/m = <span>~60 LEDs</span>
+      </div>
+      <button class="test-btn" id="testBtn" onclick="testStrip()">
+        <span id="testIcon">💡</span>
+        <span id="testLabel">Test de strip</span>
+      </button>`;
+    footer.innerHTML = `
+      <button class="wz-btn wz-btn-ghost" onclick="prevStep()">←</button>
+      <button class="wz-btn wz-btn-primary" onclick="nextStep()">Voltooien →</button>`;
+  }
+
+  else if(s.id === 'done'){
+    // shorten name for display
+    const net = WZ.selectedWifi || '—';
+    body.innerHTML = `
+      <div class="done-center">
+        <div class="done-icon">✨</div>
+        <div class="done-title">Noor is klaar!</div>
+        <div class="done-sub">Je aquarium verlichting is ingesteld<br>en klaar voor gebruik.</div>
+        <div class="done-summary">
+          <div class="ds-row"><span class="ds-key">NETWERK</span><span class="ds-val">${net}</span></div>
+          <div class="ds-row"><span class="ds-key">APPARAAT</span><span class="ds-val">${WZ.deviceName}</span></div>
+          <div class="ds-row"><span class="ds-key">LEDS</span><span class="ds-val">${WZ.ledCount} stuks</span></div>
+          <div class="ds-row"><span class="ds-key">FIRMWARE</span><span class="ds-val">WLED 0.14</span></div>
+        </div>
+      </div>`;
+    footer.innerHTML = `
+      <button class="wz-btn wz-btn-primary" onclick="finishWizard()">Naar Noor →</button>`;
+  }
+}
+
+function nextStep(){
+  // validation
+  if(STEPS[WZ.step].id === 'password' && WZ.password.length < 1){
+    document.getElementById('wzError').textContent = 'Voer het wachtwoord in.';
+    return;
+  }
+  if(STEPS[WZ.step].id === 'name' && !WZ.deviceName.trim()){
+    document.getElementById('wzError').textContent = 'Geef je apparaat een naam.';
+    return;
+  }
+  if(WZ.step < STEPS.length - 1){
+    WZ.step++;
+    renderStep();
+  }
+}
+function prevStep(){
+  if(WZ.step > 0){ WZ.step--; renderStep(); }
+}
+function selectWifi(ssid){
+  WZ.selectedWifi = ssid;
+  renderStep();
+}
+function rescan(){
+  const icon = document.getElementById('scanIcon');
+  icon.classList.add('spin');
+  setTimeout(()=>icon.classList.remove('spin'), 800);
+}
+function togglePw(){
+  const inp = document.getElementById('pwInput');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+function adjustLed(delta){
+  WZ.ledCount = Math.max(1, Math.min(1000, WZ.ledCount + delta));
+  const inp = document.getElementById('ledInput');
+  if(inp) inp.value = WZ.ledCount;
+}
+function testStrip(){
+  const btn = document.getElementById('testBtn');
+  const lbl = document.getElementById('testLabel');
+  const ico = document.getElementById('testIcon');
+  if(WZ.testing) return;
+  WZ.testing = true;
+  btn.classList.add('testing');
+  lbl.textContent = 'Strip oplichten...';
+  ico.textContent = '✦';
+  setTimeout(()=>{
+    btn.classList.remove('testing');
+    lbl.textContent = 'Test geslaagd!';
+    ico.textContent = '✓';
+    setTimeout(()=>{
+      lbl.textContent = 'Test de strip';
+      ico.textContent = '💡';
+      WZ.testing = false;
+    }, 2000);
+  }, 2500);
+}
+function finishWizard(){
+  // save to localStorage (in real build: also POST to WLED /json)
+  localStorage.setItem('noor_setup_done', '1');
+  localStorage.setItem('noor_device_name', WZ.deviceName);
+  localStorage.setItem('noor_led_count', WZ.ledCount);
+
+  // update app with wizard values
+  document.getElementById('deviceName').textContent = WZ.deviceName;
+
+  const wz = document.getElementById('wizard');
+  wz.classList.add('out');
+  setTimeout(()=>{ wz.style.display='none'; }, 450);
+
+  const app = document.getElementById('app');
+  app.classList.add('visible');
+
+  // demo: auto-open update banner changelog after a bit
+  setTimeout(()=>toggleCl(), 1800);
+}
+
+/* ══════════════════════════════════════════
+   MAIN APP STATE
+══════════════════════════════════════════ */
+const S = {
+  on:true,bri:200,
+  r:120,g:180,b:255,w:80,
+  effect:0,spd:100,int:128,preset:'dag'
+};
+
+const PRESETS = [
+  {id:'dag',        name:'Daglicht',     icon:'☀️', desc:'Helder blauw-wit',  r:160,g:200,b:255,w:220,effect:0,  colors:['#a0c8ff','#d0e8ff','#ffffff','#a0c8ff']},
+  {id:'zonsopgang', name:'Zonsopgang',   icon:'🌅', desc:'Warm oranje-roze',  r:255,g:120,b:80, w:60, effect:2,  colors:['#ff4400','#ff8844','#ffcc88','#ff4400']},
+  {id:'koraalrif',  name:'Koraalrif',    icon:'🪸', desc:'Levendige kleuren', r:255,g:80, b:200,w:30, effect:8,  colors:['#ff50c8','#ff6b2b','#00cfff','#ff50c8']},
+  {id:'nacht',      name:'Maannacht',    icon:'🌙', desc:'Diep donkerblauw',  r:10, g:20, b:80, w:8,  effect:2,  colors:['#020818','#0a1440','#0d2060','#020818']},
+  {id:'plantengroei',name:'Plantengroei',icon:'🌿', desc:'Wit + blauw',       r:80, g:160,b:220,w:255,effect:0,  colors:['#50a0dc','#c0e8ff','#ffffff','#50a0dc']},
+  {id:'bewolkt',    name:'Bewolkt',      icon:'⛅', desc:'Zacht diffuus',     r:140,g:160,b:200,w:180,effect:2,  colors:['#8ca0c8','#b0c4e0','#d0dff0','#8ca0c8']},
+  {id:'avondrood',  name:'Avondrood',    icon:'🌇', desc:'Diepe rode gloed',  r:255,g:60, b:30, w:20, effect:2,  colors:['#cc1100','#ff4400','#ff8020','#cc1100']},
+  {id:'onweer',     name:'Onweer',       icon:'⛈️', desc:'Bliksem flits',     r:200,g:210,b:255,w:240,effect:9,  colors:['#0a1428','#202840','#c8d4ff','#0a1428']},
+];
+
+const EFFECTS = [
+  {id:0, icon:'▬', name:'Solid'},
+  {id:2, icon:'🫧',name:'Adem'},
+  {id:3, icon:'🌈',name:'Rainbow'},
+  {id:4, icon:'✦', name:'Sparkle'},
+  {id:9, icon:'⚡',name:'Bliksem'},
+  {id:6, icon:'〰',name:'Golf'},
+  {id:10,icon:'☄', name:'Komeet'},
+  {id:7, icon:'🎨',name:'Kleurloop'},
+];
+
+/* ── BUBBLES ── */
+(()=>{
+  const bg=document.querySelector('.bg');
+  for(let i=0;i<22;i++){
+    const b=document.createElement('div');
+    b.className='bubble';
+    const sz=3+Math.random()*13;
+    b.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;bottom:-${sz}px;animation-duration:${9+Math.random()*20}s;animation-delay:-${Math.random()*24}s;`;
+    bg.appendChild(b);
+  }
+})();
+
+/* ── TANK ── */
+function buildTank(){
+  const t=document.getElementById('tank');
+  for(let i=0;i<55;i++){const s=document.createElement('div');s.className='tseg';t.appendChild(s);}
+}
+let tf=0;
+function animTank(){
+  tf++;
+  const segs=document.querySelectorAll('.tseg');
+  const {r,g,b,w,on,bri,effect}=S;
+  const br=on?bri/255:0;
+  segs.forEach((seg,i)=>{
+    const pct=i/segs.length;
+    if(!on){seg.style.background='#000';return;}
+    let alpha=br,cr=r,cg=g,cb=b;
+    if(effect===0){alpha=br;}
+    else if(effect===2){alpha=((Math.sin(tf*.016)+1)/2*.7+.3)*br;}
+    else if(effect===3){const rgb=hsl(((pct*360+tf*.4)%360)/360,1,.5);seg.style.background=`rgba(${rgb.r},${rgb.g},${rgb.b},${br})`;return;}
+    else if(effect===4){alpha=Math.random()>.9?br:br*.12;}
+    else if(effect===9){alpha=tf%42<3?br:br*.04;}
+    else if(effect===6){alpha=((Math.sin(pct*Math.PI*4-tf*.08)+1)/2*.8+.2)*br;}
+    else if(effect===10){const pos=(tf*.3)%segs.length,d=Math.abs(i-pos);alpha=d<10?Math.max(0,1-d/10)*br:br*.04;}
+    else if(effect===7){const rgb=hsl(((tf*.2+i*3)%360)/360,.9,.5);seg.style.background=`rgba(${rgb.r},${rgb.g},${rgb.b},${br})`;return;}
+    else if(effect===8){const wv=Math.sin(pct*Math.PI*6-tf*.12);cr=Math.round(r+wv*40);cg=Math.round(g+wv*20);alpha=br;}
+    const wr=Math.min(255,cr+w),wg=Math.min(255,cg+w),wb=Math.min(255,cb+w);
+    seg.style.background=`rgba(${wr},${wg},${wb},${alpha})`;
+  });
+  requestAnimationFrame(animTank);
+}
+
+/* ── PRESETS ── */
+function buildPresets(){
+  const g=document.getElementById('pgrid');
+  g.innerHTML=PRESETS.map(p=>`
+    <div class="preset${p.id===S.preset?' active':''}" id="pr_${p.id}" onclick="applyPreset('${p.id}',this)">
+      <canvas class="pthumb" id="cv_${p.id}" width="200" height="38"></canvas>
+      <div class="pbadge">${p.icon}</div>
+      <div class="pinfo"><div class="pname">${p.name}</div><div class="pdesc">${p.desc}</div></div>
+    </div>`).join('');
+  PRESETS.forEach(p=>{
+    const cv=document.getElementById('cv_'+p.id);
+    const ctx=cv.getContext('2d');
+    const gr=ctx.createLinearGradient(0,0,200,0);
+    p.colors.forEach((c,i)=>gr.addColorStop(i/(p.colors.length-1),c));
+    ctx.fillStyle=gr;ctx.fillRect(0,0,200,38);
+  });
+}
+function applyPreset(id,el){
+  const p=PRESETS.find(x=>x.id===id);if(!p)return;
+  S.preset=id;S.r=p.r;S.g=p.g;S.b=p.b;S.w=p.w;S.effect=p.effect;
+  ['R','G','B','W'].forEach(ch=>updateCh(ch,S[ch.toLowerCase()]));
+  document.querySelectorAll('.preset').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.echip').forEach(c=>c.classList.toggle('active',+c.dataset.id===p.effect));
+  toast(`${p.icon} ${p.name}`);
+}
+
+/* ── EFFECTS ── */
+function buildEffects(){
+  document.getElementById('erow').innerHTML=
+    EFFECTS.map(e=>`<div class="echip${e.id===0?' active':''}" data-id="${e.id}" onclick="setEffect(${e.id},this)">
+      <span class="eico">${e.icon}</span><span class="ename">${e.name}</span></div>`).join('');
+}
+function setEffect(id,el){
+  S.effect=id;
+  document.querySelectorAll('.echip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ── CONTROLS ── */
+function togglePower(){S.on=!S.on;document.getElementById('pwrBtn').classList.toggle('on',S.on);toast(S.on?'💡 Aan':'🌑 Uit');}
+function setBri(v){S.bri=+v;document.getElementById('briVal').textContent=v;document.getElementById('briFill').style.width=(v/255*100)+'%';}
+function setCh(ch,v){S[ch.toLowerCase()]=+v;updateCh(ch,v);}
+function updateCh(ch,v){document.getElementById('ch'+ch).textContent=v;document.getElementById('f'+ch).style.width=(v/255*100)+'%';}
+function setParam(t,v){v=+v;S[t]=v;if(t==='spd'){document.getElementById('spdV').textContent=v;document.getElementById('fSpd').style.width=(v/255*100)+'%';}else{document.getElementById('intV').textContent=v;document.getElementById('fInt').style.width=(v/255*100)+'%';}}
+
+/* ── UPDATE BANNER ── */
+let clOpen=false;
+function toggleCl(){
+  clOpen=!clOpen;
+  document.getElementById('ubBody').classList.toggle('open',clOpen);
+  document.getElementById('ubToggle').classList.toggle('open',clOpen);
+}
+function dismissUpdate(){
+  // sla tijdstip op — na 24u opnieuw checken
+  localStorage.setItem('noor_update_snoozed', Date.now().toString());
+  const b=document.getElementById('updateBanner');
+  b.style.transition='opacity .3s,transform .3s';
+  b.style.opacity='0';b.style.transform='translateY(-6px)';
+  setTimeout(()=>b.style.display='none',300);
+  toast('Herinnering over 24 uur');
+}
+async function doInstall(){
+  document.getElementById('ubActions').style.display='none';
+  document.getElementById('ubBody').classList.remove('open');
+  clOpen=false;
+  document.getElementById('ubToggle').style.display='none';
+  document.getElementById('ubProg').classList.add('show');
+  const fill=document.getElementById('ipFill');
+  const msg=document.getElementById('ipMsg');
+
+  // In productie: download .bin van GitHub en POST naar WLED OTA
+  // WLED endpoint: POST /update met multipart/form-data (field: "file")
+  // Hier simuleren we de stappen voor de demo
+  if(_updateBinUrl){
+    try {
+      msg.textContent = 'Firmware ophalen van GitHub...';
+      fill.style.width = '15%';
+      const binRes = await fetch(_updateBinUrl);
+      const blob = await binRes.blob();
+      fill.style.width = '40%';
+      msg.textContent = 'Uploaden naar apparaat...';
+      const form = new FormData();
+      form.append('file', blob, 'firmware.bin');
+      // POST naar hetzelfde IP als waar de GUI draait (de ESP zelf)
+      const otaRes = await fetch('/update', {method:'POST', body:form});
+      fill.style.width = '95%';
+      if(otaRes.ok){
+        fill.style.width = '100%';
+        msg.textContent = '✓ Klaar! Apparaat herstart...';
+        _finishInstall();
+      } else {
+        throw new Error('OTA mislukt');
+      }
+    } catch(e) {
+      msg.textContent = '⚠ Mislukt: ' + e.message;
+      fill.style.background = 'var(--coral)';
+    }
+    return;
+  }
+
+  // Demo simulatie (geen echte bin URL)
+  const steps=[
+    {p:12,m:'Firmware ophalen van GitHub...',  t:500},
+    {p:30,m:'Verbinding met apparaat...',       t:1100},
+    {p:55,m:'Firmware uploaden...',             t:2000},
+    {p:78,m:'Firmware uploaden...',             t:3000},
+    {p:92,m:'Verifiëren...',                    t:3900},
+    {p:100,m:'✓ Klaar! Apparaat herstart...',  t:4800},
+  ];
+  steps.forEach(s=>setTimeout(()=>{
+    fill.style.width=s.p+'%'; msg.textContent=s.m;
+    if(s.p===100) setTimeout(_finishInstall, 1000);
+  },s.t));
+}
+
+function _finishInstall(){
+  const b=document.getElementById('updateBanner');
+  b.style.transition='all .4s';b.style.opacity='0';b.style.transform='translateY(-6px)';
+  setTimeout(()=>b.style.display='none',400);
+  document.getElementById('appVtag').textContent='v1.1.0';
+  toast('✓ Noor bijgewerkt naar v1.1.0');
+}
+
+/* ── UPDATE CHECK (24h interval) ── */
+const CURRENT_VERSION = '1.0.3';
+const CHECK_INTERVAL  = 24 * 60 * 60 * 1000; // 24 uur in ms
+
+async function checkForUpdate(){
+  // In demo altijd een update tonen
+  showUpdateBanner('1.0.3', '1.1.0', [
+    'Nieuw preset: Koraalrif met dynamische kleurwisseling',
+    'Witte channel reageert nu apart op helderheidsslider',
+    'Bugfix: Onweer effect stopte soms vroegtijdig',
+    'Snellere verbinding bij opstarten',
+  ], null);
+}
+
+function isNewer(a, b){
+  const pa=a.split('.').map(Number), pb=b.split('.').map(Number);
+  for(let i=0;i<3;i++){if(pa[i]>pb[i])return true;if(pa[i]<pb[i])return false;}
+  return false;
+}
+
+let _updateBinUrl = null;
+
+function showUpdateBanner(from, to, notes, assets){
+  document.getElementById('ubVersions').textContent = `v${from} → v${to}`;
+  // inject changelog items from GitHub release notes
+  if(notes && notes.length){
+    document.querySelector('.ub-changes').innerHTML =
+      notes.map(n=>`<li>${n}</li>`).join('');
+  }
+  // find .bin asset for OTA
+  if(assets){
+    const bin = assets.find(a => a.name.endsWith('.bin'));
+    if(bin) _updateBinUrl = bin.browser_download_url;
+  }
+  document.getElementById('updateBanner').style.display = '';
+}
+
+/* ── UTILS ── */
+function hsl(h,s,l){
+  let r,g,b;
+  if(s===0){r=g=b=l;}
+  else{const q=l<.5?l*(1+s):l+s-l*s,p=2*l-q;r=h2r(p,q,h+1/3);g=h2r(p,q,h);b=h2r(p,q,h-1/3);}
+  return{r:Math.round(r*255),g:Math.round(g*255),b:Math.round(b*255)};
+}
+function h2r(p,q,t){
+  if(t<0)t+=1;if(t>1)t-=1;
+  if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;
+}
+let _t;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(_t);_t=setTimeout(()=>el.classList.remove('show'),2400);
+}
+
+/* ══════════════════════════════════════════
+   MOCK WLED API — demo only
+   Onderschept alle fetch() calls en simuleert
+   een echt WLED apparaat op het netwerk.
+══════════════════════════════════════════ */
+const _realFetch = window.fetch.bind(window);
+
+// Gesimuleerde WLED state
+const MOCK_STATE = {
+  on: true, bri: 200,
+  seg: [{ col: [[120,180,255],[0,0,0,80]], fx: 0, sx: 100, ix: 128 }],
+  ps: -1
+};
+const MOCK_INFO = {
+  name: 'Aquarium Woonkamer',
+  ver: '0.15.0-b7',
+  brand: 'WLED',
+  product: 'FOSS',
+  mac: 'AA:BB:CC:DD:EE:FF',
+  ip: '192.168.1.42',
+  arch: 'esp32s3',
+  freeheap: 180000,
+  uptime: 3600,
+  leds: { count: 90, rgbw: true, fps: 60 },
+  wifi: { ssid: 'Thuis_WiFi_5G', rssi: -55, channel: 6, bssid: '11:22:33:44:55:66' }
+};
+
+// Fake wifi netwerken voor de wizard
+const MOCK_NETWORKS = [
+  { ssid: 'Thuis_WiFi_5G',   rssi: -45 },
+  { ssid: 'KPN_Wifi_4B2A',   rssi: -62 },
+  { ssid: 'Ziggo_Guest',     rssi: -70 },
+  { ssid: 'iPhone van Lisa', rssi: -78 },
+];
+
+window.fetch = async function(url, opts={}) {
+  const path = typeof url === 'string' ? url.replace(/^https?:\/\/[^\/]+/, '') : url;
+
+  // GitHub API calls — gewoon doorsturen
+  if(typeof url === 'string' && url.includes('github.com')) {
+    return _realFetch(url, opts);
+  }
+
+  // Simuleer netwerk vertraging
+  await new Promise(r => setTimeout(r, 60 + Math.random()*80));
+
+  // POST /json/state — verwerk state update
+  if(path === '/json/state' && opts.method === 'POST') {
+    const body = JSON.parse(opts.body || '{}');
+    if(body.on !== undefined) MOCK_STATE.on = body.on;
+    if(body.bri !== undefined) MOCK_STATE.bri = body.bri;
+    if(body.seg) {
+      body.seg.forEach((s,i) => {
+        if(!MOCK_STATE.seg[i]) MOCK_STATE.seg[i] = {};
+        Object.assign(MOCK_STATE.seg[i], s);
+      });
+    }
+    if(body.ps !== undefined) MOCK_STATE.ps = body.ps;
+    logMock('POST /json/state', body);
+    return mockResponse(MOCK_STATE);
+  }
+
+  // GET /json/state
+  if(path === '/json/state') {
+    return mockResponse(MOCK_STATE);
+  }
+
+  // GET /json/info
+  if(path === '/json/info') {
+    return mockResponse(MOCK_INFO);
+  }
+
+  // GET /json — gecombineerd
+  if(path === '/json') {
+    return mockResponse({ state: MOCK_STATE, info: MOCK_INFO });
+  }
+
+  // Wifi scan
+  if(path === '/json/networks' || path === '/wifiscan') {
+    return mockResponse({ networks: MOCK_NETWORKS });
+  }
+
+  // POST /update — OTA firmware update simulatie
+  if(path === '/update') {
+    logMock('POST /update', '← firmware upload gestart');
+    return mockResponse({ status: 'ok' });
+  }
+
+  // Wifi config opslaan
+  if(path === '/json/cfg' || path === '/wifi') {
+    return mockResponse({ status: 'connecting' });
+  }
+
+  // Fallback — 404
+  console.warn('[Mock WLED] Onbekende URL:', path);
+  return new Response('Not found', { status: 404 });
+};
+
+function mockResponse(data) {
+  return new Response(JSON.stringify(data), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+function logMock(endpoint, data) {
+  const el = document.getElementById('mockLog');
+  if(!el) return;
+  const line = document.createElement('div');
+  line.className = 'mock-line';
+  line.innerHTML = `<span class="mock-ep">${endpoint}</span> <span class="mock-data">${JSON.stringify(data).slice(0,80)}</span>`;
+  el.insertBefore(line, el.firstChild);
+  while(el.children.length > 8) el.removeChild(el.lastChild);
+}
+
+/* ══════════════════════════════════════════
+   DEMO BADGE + API LOG
+══════════════════════════════════════════ */
+(function injectDemoBadge(){
+  const style = document.createElement('style');
+  style.textContent = `
+    .demo-badge {
+      position:fixed;top:12px;left:50%;transform:translateX(-50%);
+      background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.35);
+      border-radius:999px;padding:5px 14px;
+      font-family:'DM Mono',monospace;font-size:10px;
+      color:rgba(251,191,36,.8);letter-spacing:2px;
+      z-index:200;pointer-events:none;
+    }
+    .mock-panel {
+      position:fixed;bottom:0;left:0;right:0;z-index:200;
+      background:rgba(4,9,15,.97);
+      border-top:1px solid rgba(255,255,255,.08);
+      padding:8px 16px 10px;
+      font-family:'DM Mono',monospace;
+      max-width:460px;margin:0 auto;
+    }
+    .mock-title {
+      font-size:9px;letter-spacing:2px;text-transform:uppercase;
+      color:rgba(34,211,238,.5);margin-bottom:6px;
+    }
+    .mock-line {
+      font-size:10px;color:rgba(200,230,255,.45);
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      line-height:1.6;
+    }
+    .mock-ep { color:rgba(34,211,238,.7); }
+    .mock-data { color:rgba(200,230,255,.35); }
+    #app { padding-bottom: 110px !important; }
+  `;
+  document.head.appendChild(style);
+
+  const badge = document.createElement('div');
+  badge.className = 'demo-badge';
+  badge.textContent = '✦ DEMO MODUS';
+  document.body.appendChild(badge);
+
+  const panel = document.createElement('div');
+  panel.className = 'mock-panel';
+  panel.innerHTML = `
+    <div class="mock-title">Mock WLED API — wat er naar het board gestuurd zou worden</div>
+    <div id="mockLog"></div>
+  `;
+  document.body.appendChild(panel);
+})();
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+buildTank();
+buildPresets();
+buildEffects();
+animTank();
+
+// Demo: sla wizard over, ga direct naar de app
+localStorage.removeItem('noor_setup_done');
+localStorage.removeItem('noor_update_snoozed');
+
+// Start de wizard zodat je hem kunt doorlopen
+renderStep();
+
+// Periodieke update check elke 24u
+setInterval(checkForUpdate, CHECK_INTERVAL);
+</script>
+</body>
+</html>

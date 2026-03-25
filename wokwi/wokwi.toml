@@ -1,4 +1,0 @@
-[wokwi]
-version = 1
-elf = ../wokwi-firmware/noor.elf
-firmware = ../wokwi-firmware/noor.bin

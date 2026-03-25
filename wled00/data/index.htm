@@ -999,6 +999,7 @@ const PRESETS = [
   {id:'bewolkt',    name:'Bewolkt',      icon:'⛅', desc:'Zacht diffuus',     r:140,g:160,b:200,w:180,effect:2,  colors:['#8ca0c8','#b0c4e0','#d0dff0','#8ca0c8']},
   {id:'avondrood',  name:'Avondrood',    icon:'🌇', desc:'Diepe rode gloed',  r:255,g:60, b:30, w:20, effect:2,  colors:['#cc1100','#ff4400','#ff8020','#cc1100']},
   {id:'onweer',     name:'Onweer',       icon:'⛈️', desc:'Bliksem flits',     r:200,g:210,b:255,w:240,effect:9,  colors:['#0a1428','#202840','#c8d4ff','#0a1428']},
+  {id:'silhouet',   name:'Silhouet',     icon:'🌆', desc:'Warm oranje → paars',r:255,g:80, b:20, w:0,  effect:12, colors:['#8800cc','#cc2200','#ff6600','#ffaa00']},
 ];
 
 const EFFECTS = [
@@ -1048,6 +1049,17 @@ function animTank(){
     else if(effect===10){const pos=(tf*.3)%segs.length,d=Math.abs(i-pos);alpha=d<10?Math.max(0,1-d/10)*br:br*.04;}
     else if(effect===7){const rgb=hsl(((tf*.2+i*3)%360)/360,.9,.5);seg.style.background=`rgba(${rgb.r},${rgb.g},${rgb.b},${br})`;return;}
     else if(effect===8){const wv=Math.sin(pct*Math.PI*6-tf*.12);cr=Math.round(r+wv*40);cg=Math.round(g+wv*20);alpha=br;}
+    else if(effect===12){
+      // Silhouet gradient: paars onderaan → oranje/geel bovenaan
+      // pct=0 is links (top injectie = warm), pct=1 is rechts (koel)
+      const warm={r:255,g:100,b:0};
+      const cool={r:120,g:0,b:180};
+      cr=Math.round(warm.r*(1-pct)+cool.r*pct);
+      cg=Math.round(warm.g*(1-pct)+cool.g*pct);
+      cb=Math.round(warm.b*(1-pct)+cool.b*pct);
+      // lichte flikker voor levendigheid
+      alpha=(0.85+Math.sin(tf*.02+pct*3)*.15)*br;
+    }
     const wr=Math.min(255,cr+w),wg=Math.min(255,cg+w),wb=Math.min(255,cb+w);
     seg.style.background=`rgba(${wr},${wg},${wb},${alpha})`;
   });
